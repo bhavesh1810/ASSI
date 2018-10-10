@@ -1,0 +1,169 @@
+
+
+4.1
+
+
+Declare
+salary number;
+d_code number:=&a;
+
+procedure Maxsal(x IN OUT staff_master.dept_code%type) IS
+
+CURSOR Pawar IS SELECT max(staff_sal) from staff_master where dept_code=x;
+BEGIN
+	OPEN Pawar;
+	Loop
+	fetch Pawar into salary;
+	exit when Pawar%NOTFOUND;
+	dbms_output.put_line('MAXSAL: ' ||salary);
+	end loop;
+	close Pawar;
+end;
+begin
+	Maxsal(d_code);
+end;
+/
+
+
+
+4.2
+
+
+declare 
+dob date:=to_date('&dob','dd/mm/yyyy');
+age number;
+mon number;
+FUNCTION calAge(x date)
+return number
+IS
+begin
+ age:=months_between(sysdate,x)/12;
+ mon:=MOD(months_between(sysdate,x),12);
+return age;
+end;
+begin
+age:=calAge(dob);
+dbms_output.put_line('AGE is  '|| ROUND(age,0) ||' years ' || ROUND(mon,0) || '  months'); 
+end;
+/
+
+
+4.3
+
+    DECLARE
+    StaffCode staff_master.staff_code%type:=&a;
+    StaffName staff_master.staff_name%type;
+    procedure UP(x IN staff_master.staff_code%type)
+    IS
+    CURSOR bha_bhupesh IS SELECT staff_code,upper(staff_name) from staff_master
+ where staff_code=StaffCode;
+    BEGIN
+    OPEN bha_bhupesh;
+   LOOP
+   FETCH bha_bhupesh into StaffCode, StaffName;
+  EXIT WHEN bha_bhupesh%NOTFOUND;
+  update staff_master set staff_name=StaffName where staff_code=StaffCode;
+   END LOOP;
+   CLOSE bha_bhupesh;
+   END;
+   BEGIN
+  UP(StaffCode);
+  END;
+/
+
+
+
+
+4.5
+
+
+
+
+DECLARE
+DA number;
+years number;
+HRA number;
+TA number;
+total number;
+SA number;
+xyz number;
+salary staff_master.staff_sal%type;
+s_code staff_master.staff_code%type :=&Scode;
+h_date staff_master.hiredate%type;
+Function CTC(x number)
+RETURN number
+IS
+CURSOR Deepesh IS SELECT staff_code,staff_sal,hiredate from staff_master where staff_code=s_code;
+BEGIN
+OPEN Deepesh;
+LOOP
+FETCH Deepesh INTO s_code, salary,h_date;
+EXIT WHEN Deepesh%NOTFOUND;
+DA :=0.15*salary;
+HRA :=0.2*salary;
+TA :=0.08*salary;
+years := months_between(sysdate,h_date)/12;
+IF years<1 THEN
+SA:=0;
+ELSIF years>=1 AND years<2 THEN
+SA:= 0.1*salary;
+ELSIF years>=2 AND years<4 THEN
+SA:= 0.2*salary;
+ELSE
+SA:= 0.3*salary;
+END IF;
+total :=DA+HRA+TA+SA+salary;
+RETURN total;
+END LOOP;
+CLOSE Deepesh;
+END;
+BEGIN
+xyz:= CTC(s_code);
+dbms_output.put_line('S Code:' ||s_code);
+dbms_output.put_line('CTC:' ||xyz);
+END;
+/
+
+
+
+
+4.7
+
+
+Declare
+exp number;
+total number;
+h_date staff_master.hiredate%type;
+salary staff_master.staff_sal%type;
+s_code staff_master.staff_code%type:=&a;
+Procedure chutki(s_code IN number)
+IS
+CURSOR CR IS SELECT staff_sal,hiredate from staff_master where staff_code=s_code;
+BEGIN
+OPEN CR;
+LOOP
+FETCH CR into salary,h_date;
+EXIT WHEN CR%NOTFOUND;
+exp:=months_between(sysdate,h_date)/12;
+IF exp<2
+THEN
+total:=salary;
+ELSIF exp>2 AND exp<5
+THEN
+total:=1.2*salary;
+ELSE
+total:=1.25*salary;
+END IF;
+UPDATE staff_master set staff_sal=total where staff_code=s_code;
+END LOOP;
+CLOSE CR;
+END;
+BEGIN
+execute immediate 'CREATE TABLE IF NOT EXISTS staff_master_back AS select * from staff_master where 1=3';
+insert into staff_master_back values(s_code,'','','','','','',salary,'');
+chutki(s_code);
+END;
+/
+
+
+
