@@ -1,0 +1,72 @@
+12.1))
+[SEP19_RDBMS17@NDAUNIX ~]$ cat yesno1.sh
+yesno()
+{
+echo "Enter your ans in y/n"
+read ans
+if [ $ans == 'y' -o $ans == 'Y' ]
+then
+ return 0
+else
+ return 1
+fi
+}
+echo "Are you going?"
+yesno
+a=$#
+echo "your answer is $a"
+
+
+
+12.2))))))))))
+
+
+[SEP19_RDBMS17@NDAUNIX ~]$ cat yesno2.sh
+yesno()
+{
+echo $ques
+read ans
+if [ $ans == 'y' -o $ans == 'Y' ]
+then
+ return 0
+else
+ return 1
+fi
+}
+echo "Enter your question:"
+read ques
+yesno "\${ques}"
+a=$?
+echo "your answer is $a"
+
+12.3).............
+
+[SEP19_RDBMS17@NDAUNIX ~]$ cat yesno3.sh
+yesno()
+{
+if [ -f $ques ]
+then
+echo "Do you want to delete the file $ques"
+read ans
+
+if [ $ans == 'y' -o $ans == 'Y' ]
+then
+ rm $ques
+ echo "File $ques is deleted"
+fi
+else
+echo "Do you want to delete the directory?"
+read ans
+if [ $ans == 'y' -o $ans == 'Y' ]
+then
+        rmdir $ques
+        echo "Directory $ques is deleted"
+fi
+fi
+}
+echo "Enter File name / Directory Name"
+read ques
+yesno "\${ques}"
+
+
+
